@@ -3,26 +3,19 @@ using Zenject;
 
 public class Bootstrap : MonoBehaviour
 {
-    [SerializeField] private CubeFactory _cubeFactory;
-
     private IInputMode _inputMode;
+    private CubeSpawner _cubeSpawner;
 
     private void Awake()
     {
-        StartCoroutine(_cubeFactory.CreateCubeWithDelay());
-
         _inputMode.Init();
-        _inputMode.OnPushCube += OnPushCube;
-    }
-
-    private void OnPushCube()
-    {
-        StartCoroutine(_cubeFactory.CreateCubeWithDelay());
+        _cubeSpawner.Init();
     }
 
     [Inject]
-    public void Construct(IInputMode inputMode)
+    public void Construct(IInputMode inputMode, CubeSpawner cubeSpawner)
     {
         _inputMode = inputMode;
+        _cubeSpawner = cubeSpawner;
     }
 }

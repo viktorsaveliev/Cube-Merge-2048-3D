@@ -8,11 +8,18 @@ public class InputPC : IInputMode
 
     private Camera _camera;
 
+    private readonly float _antiflood = 0.5f;
+    private float _currentFloodTime;
+
     public void CheckInput()
     {
         if (Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0))
         {
+            if (Time.time <= _currentFloodTime) return;
+
             OnPushCube?.Invoke();
+
+            _currentFloodTime = Time.time + _antiflood;
         }
 
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);

@@ -2,7 +2,7 @@ using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(Rigidbody))]
-public class CubeAction : MonoBehaviour
+public class CubeMovement : MonoBehaviour
 {
     private readonly float _pushForce = 15f;
 
@@ -12,9 +12,7 @@ public class CubeAction : MonoBehaviour
     public void Init()
     {
         _inputMode.OnPushCube += Push;
-        _inputMode.OnPushCube += ResetComponent;
-
-        _inputMode.OnMoveCube += Move;
+        _inputMode.OnMoveCube += SetPosition;
 
         _rigidbody = GetComponent<Rigidbody>();
     }
@@ -23,22 +21,25 @@ public class CubeAction : MonoBehaviour
     {
         Vector3 forceDirection = transform.forward;
         _rigidbody.AddForce(forceDirection * _pushForce, ForceMode.Impulse);
+
+        Destroy(this);
     }
 
-    private void Move(Vector3 targetPosition)
+    private void SetPosition(Vector3 targetPosition)
     {
         Vector3 currentPosition = transform.position;
         transform.position = new Vector3(targetPosition.x, currentPosition.y, currentPosition.z);
     }
 
+    private void OnDestroy()
+    {
+        ResetComponent();
+    }
+
     private void ResetComponent()
     {
         _inputMode.OnPushCube -= Push;
-        _inputMode.OnPushCube -= ResetComponent;
-
-        _inputMode.OnMoveCube -= Move;
-
-        Destroy(this);
+        _inputMode.OnMoveCube -= SetPosition;
     }
 
     [Inject]
