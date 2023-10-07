@@ -7,13 +7,14 @@ public class CubeSpawner
 
     public void Init()
     {
-        _cubeFactory.CreateCube();
+        _cubeFactory.CreatePool();
+        _cubeFactory.ShowFreeCube();
         _inputMode.OnPushCube += OnPushCube;
     }
 
     private void OnPushCube()
     {
-        _cubeFactory.CreateCube();
+        _cubeFactory.ShowFreeCube();
     }
 
     [Inject]

@@ -5,15 +5,18 @@ using UnityEngine;
 public class CubeView : MonoBehaviour
 {
     [SerializeField] private CubeDataConfig _dataConfig;
-    [SerializeField] private TMP_Text[] _numbers;
 
+    [SerializeField] private TMP_Text[] _numbers;
+    [SerializeField] private ParticleSystem _mergeFX;
+
+    private Renderer _particleRenderer;
     private CubeMerge _cubeMerge;
     private Rigidbody _rigidbody;
     private MeshRenderer _meshRenderer;
 
     private CubeView _targetView;
 
-    private readonly float _jumpForce = 3f;
+    private readonly float _jumpForce = 4.5f;
 
     private void Awake()
     {
@@ -21,6 +24,7 @@ public class CubeView : MonoBehaviour
         _cubeMerge.OnCubeMerged += OnCubeMerged;
 
         _rigidbody = GetComponent<Rigidbody>();
+        _particleRenderer = _mergeFX.GetComponent<Renderer>();
         _meshRenderer = GetComponent<MeshRenderer>();
     }
 
@@ -34,7 +38,13 @@ public class CubeView : MonoBehaviour
 
     public void Hide()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+    }
+
+    public void UpdateView()
+    {
+        UpdateColor();
+        UpdateNumbers();
     }
 
     private void UpdateNumbers()
@@ -49,11 +59,13 @@ public class CubeView : MonoBehaviour
     {
         _targetView = target.GetComponent<CubeView>();
         _targetView.Hide();
-        _targetView.UpdateColor();
 
         MergeAnimation();
         UpdateColor();
         UpdateNumbers();
+
+        _particleRenderer.material = _dataConfig.Materials[_cubeMerge.CurrentLevel];
+        _mergeFX.Play();
     }
 
     private void MergeAnimation()

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class CubeMerge : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class CubeMerge : MonoBehaviour
 
     public int CurrentLevel => _currentLevel;
     public int CurrentNumeric => _currentNumeric;
+
+    private ScoreCounter _scoreCounter;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -24,6 +27,8 @@ public class CubeMerge : MonoBehaviour
         if (target.CurrentLevel != _currentLevel) return false;
 
         UpdateLevel();
+
+        _scoreCounter.AddScore(_currentNumeric);
         OnCubeMerged?.Invoke(target);
 
         return true;
@@ -33,5 +38,17 @@ public class CubeMerge : MonoBehaviour
     {
         _currentLevel++;
         _currentNumeric *= 2;
+    }
+
+    public void ResetData()
+    {
+        _currentLevel = 0;
+        _currentNumeric = 2;
+    }
+
+    [Inject]
+    public void Construct(ScoreCounter score)
+    {
+        _scoreCounter = score;
     }
 }
